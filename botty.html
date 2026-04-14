@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<script>
+(function(){if(localStorage.getItem('botty_lw_auth')!=='1'){window.location.replace('index.html');}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Botty — L'assistente AI che capisce davvero cosa ti serve</title>
+<meta name="description" content="Botty è il tuo assistente personale AI. Email, calendario, notizie, voli, finanza. Su Telegram. Senza app. Senza complicazioni.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<style>
+  :root {
+    --bg:         #000000;
+    --bg2:        #0d0d0d;
+    --bg3:        #141414;
+    --green:      #00993D;
+    --teal:       #64C2C9;
+    --gradient:   linear-gradient(135deg, #00993D 0%, #64C2C9 100%);
+    --white:      #FFFFFF;
+    --gray:       #9a9a9a;
+    --gray2:      #505050;
+    --border:     rgba(255,255,255,0.06);
+    --border-g:   rgba(0,153,61,0.3);
+    --radius:     18px;
+    --radius-sm:  10px;
+    --glow:       0 0 40px rgba(0,153,61,0.25);
+    --glow-lg:    0 0 80px rgba(0,153,61,0.35);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .container    { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .container-sm { max-width: 720px;  margin: 0 auto; padding: 0 24px; }
+
+  .tag {
+    display: inline-block;
+    background: rgba(0,153,61,0.12);
+    color: #4CD97A;
+    border: 1px solid rgba(0,153,61,0.35);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 16px; margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800;
+    text-decoration: none; cursor: pointer;
+    border: none; transition: all .22s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--gradient); color: var(--white);
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--glow-lg); filter: brightness(1.08); }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: rgba(100,194,201,0.4); background: rgba(100,194,201,0.05); }
+  .btn-lg { padding: 18px 40px; font-size: 17px; }
+
+  
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    background: rgba(0,0,0,0.8);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; max-width: 1100px; margin: 0 auto; padding: 0 24px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 900;
+    color: var(--white); text-decoration: none; letter-spacing: -.02em;
+  }
+  .nav-logo .logo-icon {
+    width: 34px; height: 34px; background: var(--gradient);
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 17px;
+  }
+  .nav-logo .dot {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--gray); text-decoration: none;
+    font-size: 14px; font-weight: 700; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta { display: flex; align-items: center; gap: 12px; }
+  @media (max-width: 768px) { .nav-links { display: none; } }
+
+  
+  .hero {
+    padding: 160px 0 100px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 860px; height: 860px;
+    background: radial-gradient(circle, rgba(0,153,61,.13) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .hero-eyebrow { margin-bottom: 24px; }
+  .hero h1 {
+    font-size: clamp(42px, 7vw, 80px); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.05; margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.75) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero h1 .accent {
+    background: var(--gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: clamp(17px, 2.5vw, 20px); color: var(--gray);
+    max-width: 580px; margin: 0 auto 40px; line-height: 1.65; font-weight: 600;
+  }
+  .hero-cta {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .hero-note {
+    font-size: 13px; color: var(--gray2); font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .hero-note::before { content: ''; }
+
+  
+  .chat-preview {
+    max-width: 440px; margin: 64px auto 0;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 22px; overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,.65), var(--glow);
+  }
+  .chat-header {
+    background: var(--bg3); padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chat-avatar {
+    width: 36px; height: 36px; background: var(--gradient);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
+  .chat-name  { font-weight: 800; font-size: 14px; }
+  .chat-status { font-size: 12px; color: #4CD97A; display: flex; align-items: center; gap: 4px; font-weight: 700; }
+  .chat-status::before { content: ''; width: 7px; height: 7px; background: #4CD97A; border-radius: 50%; display: inline-block; }
+  .chat-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .msg {
+    max-width: 85%; padding: 10px 14px; border-radius: 14px;
+    font-size: 14px; line-height: 1.5; animation: fadeInUp .4s ease both; font-weight: 600;
+  }
+  .msg-user {
+    background: var(--gradient); color: var(--white);
+    align-self: flex-end; border-bottom-right-radius: 4px;
+  }
+  .msg-bot {
+    background: var(--bg3); color: var(--white);
+    align-self: flex-start; border-bottom-left-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .msg-bot .msg-meta { font-size: 11px; color: var(--gray2); margin-top: 4px; font-weight: 600; }
+  .msg:nth-child(1){animation-delay:.1s}.msg:nth-child(2){animation-delay:.4s}
+  .msg:nth-child(3){animation-delay:.8s}.msg:nth-child(4){animation-delay:1.2s}
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  
+  .social-proof {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .social-proof p {
+    font-size: 12px; color: var(--gray2);
+    margin-bottom: 24px; letter-spacing: .08em; text-transform: uppercase; font-weight: 800;
+  }
+  .channels { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .channel-pill {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--gray); font-size: 14px; font-weight: 700;
+    opacity: .7; transition: opacity .2s;
+  }
+  .channel-pill:hover { opacity: 1; }
+  .channel-pill .ch-icon { display: flex; align-items: center; justify-content: center; color: var(--white); }
+  .channel-pill .ch-icon svg { width: 18px; height: 18px; stroke-width: 2; }
+  .soon {
+    font-size: 11px; background: rgba(255,255,255,.08);
+    padding: 2px 8px; border-radius: 5px; margin-left: 4px; font-weight: 700;
+  }
+
+  
+  .section { padding: 100px 0; }
+  .section-header { text-align: center; margin-bottom: 64px; }
+  .section-header h2 {
+    font-size: clamp(32px, 5vw, 52px); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.1; margin-bottom: 16px;
+  }
+  .section-header p { font-size: 18px; color: var(--gray); max-width: 500px; margin: 0 auto; font-weight: 600; }
+
+  
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media(max-width:768px){ .why-grid{grid-template-columns:1fr} }
+  .why-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+    transition: border-color .2s, transform .2s; position: relative; overflow: hidden;
+  }
+  .why-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:var(--gradient); opacity:0; transition:opacity .25s;
+  }
+  .why-card:hover { border-color: var(--border-g); transform: translateY(-3px); }
+  .why-card:hover::before { opacity: 1; }
+  .why-icon {
+    width: 50px; height: 50px; background: rgba(0,153,61,.1);
+    border: 1px solid rgba(0,153,61,.2); border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); margin-bottom: 20px;
+  }
+  .why-icon svg { width: 24px; height: 24px; stroke-width: 1.8; }
+  .why-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; letter-spacing: -.02em; }
+  .why-card p  { font-size: 14px; color: var(--gray); line-height: 1.65; font-weight: 600; }
+
+  
+  .how-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .steps { display: flex; gap: 0; position: relative; }
+  @media(max-width:768px){ .steps{flex-direction:column;gap:32px} }
+  .steps::before {
+    content: ''; position: absolute; top: 32px;
+    left: calc(16.66% + 12px); right: calc(16.66% + 12px);
+    height: 2px; background: var(--gradient); opacity: .2;
+  }
+  @media(max-width:768px){ .steps::before{display:none} }
+  .step { flex: 1; text-align: center; padding: 0 20px; }
+  .step-num-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(0,153,61,.1); border: 2px solid rgba(0,153,61,.4);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); margin: 0 auto 24px; position: relative; z-index: 1;
+    box-shadow: var(--glow);
+  }
+  .step-num-circle svg { width: 28px; height: 28px; stroke-width: 1.8; }
+  .step h3 { font-size: 17px; font-weight: 800; margin-bottom: 10px; letter-spacing: -.02em; }
+  .step p  { font-size: 14px; color: var(--gray); line-height: 1.65; font-weight: 600; }
+
+  
+  .features-grid-main {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  @media(max-width:992px){ .features-grid-main{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:480px){ .features-grid-main{grid-template-columns:1fr} }
+  .feat-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; transition: all .2s;
+    position: relative; overflow: hidden;
+  }
+  .feat-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:var(--gradient); opacity:0; transition:opacity .25s;
+  }
+  .feat-card:hover { border-color: var(--border-g); }
+  .feat-card:hover::before { opacity: 1; }
+  .feat-card.highlight {
+    border-color: var(--border-g);
+    background: linear-gradient(135deg, rgba(0,153,61,.08) 0%, var(--bg2) 100%);
+  }
+  .feat-card.highlight::before { opacity: 1; }
+  .feat-emoji { width: 44px; height: 44px; background: rgba(0,153,61,.1); border: 1px solid rgba(0,153,61,.2); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: var(--green); margin-bottom: 12px; }
+  .feat-emoji svg { width: 20px; height: 20px; stroke-width: 1.8; }
+  .feat-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.01em; }
+  .feat-card p  { font-size: 13px; color: var(--gray); line-height: 1.6; font-weight: 600; }
+
+  
+  .pricing-section { background: var(--bg); }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+  @media(max-width:768px){ .pricing-grid{grid-template-columns:1fr} }
+  .price-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 36px 28px;
+    position: relative; transition: transform .2s;
+  }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-card.featured {
+    border-color: var(--green);
+    background: linear-gradient(135deg, rgba(0,153,61,.08) 0%, var(--bg2) 60%);
+    box-shadow: var(--glow-lg);
+  }
+  .price-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--gradient); color: white;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 4px 16px; border-radius: 100px; white-space: nowrap;
+  }
+  .price-plan {
+    font-size: 12px; font-weight: 800; color: var(--gray);
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;
+  }
+  .price-amount {
+    font-size: 48px; font-weight: 900; letter-spacing: -.04em;
+    line-height: 1; margin-bottom: 4px;
+    display: flex; align-items: flex-start; gap: 4px;
+  }
+  .price-amount .currency { font-size: 22px; margin-top: 8px; }
+  .price-amount .period { font-size: 16px; color: var(--gray); font-weight: 600; align-self: flex-end; margin-bottom: 4px; }
+  .price-amount.grad-text {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .price-amount.grad-text .currency,
+  .price-amount.grad-text .period {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .price-desc { font-size: 14px; color: var(--gray); margin-bottom: 28px; line-height: 1.5; font-weight: 600; }
+  .price-cta { width: 100%; text-align: center; justify-content: center; margin-bottom: 28px; }
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .price-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--gray); line-height: 1.4; font-weight: 600;
+  }
+  .price-features li::before { content: '✓'; color: #4CD97A; font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+  .price-features li.no::before { content: '✕'; color: var(--gray2); }
+  .price-features li.no { opacity: .5; }
+
+  
+  .testimonials-section { background: var(--bg2); border-top: 1px solid var(--border); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media(max-width:768px){ .testimonials-grid{grid-template-columns:1fr} }
+  .testimonial {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; transition: border-color .2s;
+  }
+  .testimonial:hover { border-color: var(--border-g); }
+  .testimonial-stars { font-size: 16px; letter-spacing: 2px; margin-bottom: 16px; }
+  .testimonial-stars .filled { color: #4CD97A; }
+  .testimonial-stars .empty  { color: var(--gray2); }
+  .testimonial-text { font-size: 15px; line-height: 1.65; margin-bottom: 20px; color: rgba(255,255,255,.9); font-weight: 600; }
+  .testimonial-author { display: flex; align-items: center; gap: 12px; }
+  .author-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(0,153,61,.1); border: 1px solid rgba(0,153,61,.2);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .author-name { font-weight: 800; font-size: 14px; }
+  .author-role { font-size: 12px; color: var(--gray); font-weight: 600; }
+
+  
+  .faq-section { background: var(--bg); }
+  .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin: 0 auto; }
+  .faq-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color .2s; }
+  .faq-item.open { border-color: var(--border-g); }
+  .faq-q {
+    width: 100%; background: none; border: none; color: var(--white);
+    text-align: left; padding: 20px 24px;
+    font-size: 15px; font-weight: 800; font-family: 'Nunito', sans-serif;
+    cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; gap: 16px; transition: background .2s;
+  }
+  .faq-q:hover { background: rgba(255,255,255,.03); }
+  .faq-q .faq-arrow {
+    font-size: 20px; color: var(--teal);
+    transition: transform .3s; flex-shrink: 0;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s ease, padding .2s;
+    font-size: 14px; color: var(--gray); line-height: 1.7; font-weight: 600;
+  }
+  .faq-item.open .faq-a { max-height: 300px; padding: 0 24px 20px; }
+
+  
+  .final-cta {
+    padding: 120px 0; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .final-cta::before {
+    content: ''; position: absolute;
+    bottom: -200px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,153,61,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .final-cta h2 {
+    font-size: clamp(36px, 6vw, 64px); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.1; margin-bottom: 20px;
+  }
+  .final-cta p { font-size: 18px; color: var(--gray); margin-bottom: 40px; font-weight: 600; }
+
+  
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 48px 0; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+  .footer-logo {
+    font-size: 18px; font-weight: 900; letter-spacing: -.02em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-logo .dot {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  .footer-links a { color: var(--gray2); font-size: 13px; text-decoration: none; font-weight: 700; transition: color .2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { color: var(--gray2); font-size: 13px; font-weight: 600; }
+
+  
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">🤖</div>
+      Botty<span class="dot">.</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#come-funziona">Come funziona</a></li>
+      <li><a href="#cosa-fa">Cosa sa fare</a></li>
+      <li><a href="#prezzi">Piani</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="aster.html" style="color:#A78BFA;font-weight:800;">🌟 Aster Lab</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#prezzi" class="btn btn-ghost" style="padding:10px 20px;font-size:14px;">Vedi piani</a>
+      <a href="#prova" class="btn btn-primary" style="padding:10px 20px;font-size:14px;">Prova gratis →</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container-sm">
+    <div class="hero-eyebrow">
+      <span class="tag">✦ Disponibile su Telegram</span>
+    </div>
+    <h1>Il tuo assistente AI<br><span class="accent">che fa le cose.</span></h1>
+    <p class="hero-sub">
+      Email, notizie, meteo, voli, calendario, finanza.<br>
+      Ti risponde in 3 secondi. Senza app, senza setup,<br>senza spiegazioni infinite.
+    </p>
+    <div class="hero-cta">
+      <a href="#prova" class="btn btn-primary btn-lg">🚀 Inizia gratis</a>
+      <a href="#come-funziona" class="btn btn-ghost btn-lg">Come funziona ↓</a>
+    </div>
+    <p class="hero-note">Nessuna carta richiesta per il piano gratuito</p>
+
+    
+    <div class="chat-preview">
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-name">Botty</div>
+          <div class="chat-status">Online</div>
+        </div>
+      </div>
+      <div class="chat-body">
+        <div class="msg msg-user">Ho un volo domani per Madrid, dimmi se piove là</div>
+        <div class="msg msg-bot">
+          ☀️ Domani a Madrid: 22°C, soleggiato con qualche nuvola nel pomeriggio.
+          Nessuna pioggia prevista. Vento da nord a 15 km/h.<br>
+          <span class="msg-meta">Fonte: Open-Meteo · adesso</span>
+        </div>
+        <div class="msg msg-user">E il volo Ryanair FR1234 è in orario?</div>
+        <div class="msg msg-bot">
+          ✅ FR1234 MXP→MAD — <strong>Partenza 08:35, in orario.</strong> Gate B14. Check-in online ancora aperto.
+          <span class="msg-meta">Dati aggiornati · adesso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="social-proof">
+  <div class="container">
+    <p>Disponibile dove sei già presente</p>
+    <div class="channels">
+      <div class="channel-pill"><span class="ch-icon"><i data-lucide="message-circle"></i></span> Telegram</div>
+      <div class="channel-pill"><span class="ch-icon"><i data-lucide="smartphone"></i></span> WhatsApp <span class="soon">Presto</span></div>
+      <div class="channel-pill"><span class="ch-icon"><i data-lucide="volume-2"></i></span> Messaggi vocali</div>
+      <div class="channel-pill"><span class="ch-icon"><i data-lucide="globe"></i></span> Web App <span class="soon">Beta</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">Perché Botty</span>
+      <h2>Non è un chatbot.<br>È un compagno di lavoro.</h2>
+      <p>La differenza tra un assistente AI generico e uno che conosce davvero la tua vita.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon"><i data-lucide="zap"></i></div>
+        <h3>Agisce, non risponde soltanto</h3>
+        <p>Manda email, legge il calendario, controlla i voli, monitora la borsa. Non ti spiega come farlo — lo fa lui, al posto tuo.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon"><i data-lucide="brain-circuit"></i></div>
+        <h3>Ti conosce davvero</h3>
+        <p>Con il tempo impara le tue abitudini, preferenze, contesti. Le risposte diventano più precise. La memoria persiste tra le sessioni.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon"><i data-lucide="shield"></i></div>
+        <h3>I tuoi dati restano tuoi</h3>
+        <p>Niente rivendita, niente training su dati personali, niente broker. Zero tracciamento pubblicitario. Punto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section how-section" id="come-funziona">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">Come funziona</span>
+      <h2>Attivo in 60 secondi.<br>Utile in 61.</h2>
+      <p>Tre passaggi. Nessuna installazione. Nessun manuale.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num-circle"><i data-lucide="link"></i></div>
+        <h3>Connetti</h3>
+        <p>Apri Botty su Telegram (o web). Scegli il tuo piano. Un tap e sei dentro — nessuna email di conferma, nessun form lunghissimo.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num-circle"><i data-lucide="settings-2"></i></div>
+        <h3>Configura</h3>
+        <p>Collega Gmail, Outlook, Google Calendar. Aggiungi i servizi che usi. Ci vogliono 2 minuti con una guida interattiva passo-passo.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num-circle"><i data-lucide="rocket"></i></div>
+        <h3>Usa</h3>
+        <p>Scrivi in italiano come scriveresti a un amico. Niente comandi speciali. Niente sintassi da imparare. Lui capisce.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cosa-fa">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">Cosa sa fare</span>
+      <h2>Un tool per ogni<br>momento della giornata.</h2>
+      <p>Dal buongiorno alla sera, Botty copre tutto quello che ti serve davvero.</p>
+    </div>
+    <div class="features-grid-main">
+      <div class="feat-card highlight reveal">
+        <div class="feat-emoji"><i data-lucide="mail"></i></div>
+        <h4>Email & Posta</h4>
+        <p>Legge, riassume, risponde. Filtra lo spam informativo. Ti segnala solo l'importante.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="calendar-check-2"></i></div>
+        <h4>Calendario</h4>
+        <p>Gestisce appuntamenti, ti ricorda le scadenze, pianifica la settimana su richiesta.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="plane"></i></div>
+        <h4>Voli & Viaggi</h4>
+        <p>Monitora prezzi voli, stato del gate, meteo alla destinazione, orari treni.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="trending-up"></i></div>
+        <h4>Finanza & Borsa</h4>
+        <p>Quotazioni live, watchlist personalizzata, alert su soglie di prezzo definite da te.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="cloud-sun"></i></div>
+        <h4>Meteo</h4>
+        <p>Previsioni precise per qualsiasi città. Ti avverte se cambia qualcosa sul tuo percorso.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="newspaper"></i></div>
+        <h4>Notizie & News</h4>
+        <p>Digest giornaliero su Telco, AI, finanza. Solo le news che contano, filtrate per te.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="bell-ring"></i></div>
+        <h4>Reminder & Task</h4>
+        <p>Promemoria contestuali, liste da fare, follow-up automatici. Senza app da aprire.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-emoji"><i data-lucide="message-square"></i></div>
+        <h4>Voce</h4>
+        <p>Manda un vocale, lui trascrive, risponde, agisce. Perfetto quando hai le mani occupate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section pricing-section" id="prezzi">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">Piani</span>
+      <h2>Gratis per iniziare.<br>Potente per chi vuole di più.</h2>
+      <p>Nessun contratto annuale. Cancelli quando vuoi, senza penali, senza attese.</p>
+    </div>
+    <div class="pricing-grid">
+
+      
+      <div class="price-card reveal">
+        <div class="price-plan">Starter</div>
+        <div class="price-amount">
+          <span class="currency">€</span>0<span class="period">/mese</span>
+        </div>
+        <p class="price-desc">Per capire se fa per te. Senza carta, senza impegno.</p>
+        <a href="#prova" class="btn btn-ghost price-cta">Inizia gratis</a>
+        <ul class="price-features">
+          <li>50 messaggi/giorno</li>
+          <li>Meteo e notizie base</li>
+          <li>1 account email collegato</li>
+          <li>Reminder semplici</li>
+          <li class="no">Calendario & voli</li>
+          <li class="no">Finanza & watchlist</li>
+          <li class="no">Messaggi vocali</li>
+        </ul>
+      </div>
+
+      
+      <div class="price-card featured reveal">
+        <div class="price-badge">⭐ Più scelto</div>
+        <div class="price-plan">Pro</div>
+        <div class="price-amount grad-text">
+          <span class="currency">€</span>2,99<span class="period">/mese</span>
+        </div>
+        <p class="price-desc">Per chi vuole un assistente vero, non un esperimento.</p>
+        <a href="plan-pro.html" class="btn btn-primary price-cta">Attiva ora →</a>
+        <ul class="price-features">
+          <li>Messaggi illimitati</li>
+          <li>Email, calendario, voli</li>
+          <li>Finanza & watchlist personale</li>
+          <li>Messaggi vocali (STT/TTS)</li>
+          <li>Notifiche proattive</li>
+          <li>Memoria conversazioni (90gg)</li>
+          <li>Supporto prioritario</li>
+        </ul>
+      </div>
+
+      
+      <div class="price-card reveal">
+        <div class="price-plan">Family</div>
+        <div class="price-amount">
+          <span class="currency">€</span>5,99<span class="period">/mese</span>
+        </div>
+        <p class="price-desc">Fino a 5 profili. Uno per ogni membro della famiglia.</p>
+        <a href="plan-family.html" class="btn btn-ghost price-cta">Scopri il piano</a>
+        <ul class="price-features">
+          <li>Tutto di Pro × 5 profili</li>
+          <li>Profilo dedicato per ogni membro</li>
+          <li>Dashboard famiglia condivisa</li>
+          <li>Alert genitore su profili junior</li>
+          <li>Gestione spese familiari</li>
+          <li>Memoria estesa (365gg)</li>
+          <li>Account manager dedicato</li>
+        </ul>
+      </div>
+
+    </div>
+    <p style="text-align:center;margin-top:32px;font-size:13px;color:var(--gray2);font-weight:700;">
+      Tutti i piani includono crittografia end-to-end · Nessun lock-in · Cancella in un click
+    </p>
+  </div>
+</section>
+
+<section class="section testimonials-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">Chi lo usa</span>
+      <h2>Lo usano ogni giorno.<br>Lo raccontano così.</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial reveal">
+        <div class="testimonial-stars">
+          <span class="filled">★★★★★</span>
+        </div>
+        <p class="testimonial-text">"Ho smesso di aprire 6 app diverse ogni mattina. Botty mi riassume tutto in un messaggio prima che il caffè sia pronto."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👨‍💼</div>
+          <div>
+            <div class="author-name">Marco T.</div>
+            <div class="author-role">Manager, Milano</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial reveal">
+        <div class="testimonial-stars">
+          <span class="filled">★★★★★</span>
+        </div>
+        <p class="testimonial-text">"L'ho dato anche a mia moglie. Ora entrambi abbiamo il profilo Family. Botty gestisce la settimana per quattro persone — noi non ci dimentichiamo più nulla."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👨‍👩‍👧</div>
+          <div>
+            <div class="author-name">Luca B.</div>
+            <div class="author-role">Piano Family, Roma</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial reveal">
+        <div class="testimonial-stars">
+          <span class="filled">★★★★</span><span class="empty">☆</span>
+        </div>
+        <p class="testimonial-text">"Fa cose che non sapevo fossero possibili. Mi ha avvisato che il prezzo del volo era sceso mentre ero in riunione. L'ho preso e ho risparmiato €140."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👩‍💻</div>
+          <div>
+            <div class="author-name">Sara V.</div>
+            <div class="author-role">Freelance, Torino</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section faq-section" id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag">FAQ</span>
+      <h2>Le domande che avresti<br>fatto comunque.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Devo installare qualcosa? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">No. Botty funziona su Telegram — che hai già. Nessuna app extra, nessun account su siti sconosciuti. Clicchi un link, e sei dentro.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          I miei dati sono al sicuro? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Sì. Non vendiamo dati a terzi, non usiamo le tue conversazioni per addestrare modelli pubblici, non facciamo tracciamento pubblicitario. I tuoi dati restano nel tuo profilo, criptati, e li puoi eliminare in qualsiasi momento.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Posso cancellare quando voglio? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Certo. Un click nella sezione Account e l'abbonamento si interrompe alla fine del periodo pagato. Niente penali, niente email di "ci dispiace tanto", niente call di retention obbligatorie.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Funziona in italiano? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">È la prima lingua di Botty. Capisce dialetti, abbreviazioni, messaggi sbrigativi scritti in treno. Se gli scrivi in inglese risponde in inglese — se gli scrivi in italiano (anche storpiato), risponde in italiano.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Cosa succede se non mi piace? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Il piano Starter è gratis, provi senza rischi. Se passi a Pro e non sei soddisfatto entro 14 giorni, ti rimborsiamo senza fare domande. È questa la nostra garanzia.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Il piano Family funziona per famiglie "digitalmente miste"? <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Sì, ed è pensato proprio per questo. C'è chi usa tutte le feature avanzate e chi vuole solo il meteo e i reminder. Ogni profilo si configura separatamente — non devi convincere nessuno a fare il setup tecnico.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="prova">
+  <div class="container-sm">
+    <span class="tag">Pronto?</span>
+    <h2>Inizia oggi.<br>Gratuitamente.</h2>
+    <p>Nessuna carta richiesta. In 60 secondi sei operativo.</p>
+    <a href="https://t.me/fwclawbot" class="btn btn-primary btn-lg" style="margin:0 auto;">
+      🤖 Apri Botty su Telegram
+    </a>
+    <p style="margin-top:20px;font-size:13px;color:var(--gray2);font-weight:700;">
+      Hai domande? Scrivi a <a href="mailto:ciao@botty.ai" style="color:var(--teal);text-decoration:none;font-weight:800;">ciao@botty.ai</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        🤖 Botty<span class="dot">.</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Termini</a>
+        <a href="#">Sicurezza</a>
+        <a href="mailto:ciao@botty.ai">Contatti</a>
+        <a href="#">Blog</a>
+      </div>
+      <p class="footer-copy">© 2025 Botty. Fatto con ☕ in Italia.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.why-grid, .features-grid-main, .pricing-grid, .testimonials-grid, .steps').forEach(grid => {
+    grid.querySelectorAll('.reveal').forEach((card, i) => {
+      card.style.transitionDelay = (i * 0.08) + 's';
+    });
+  });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });
+window.addEventListener('load', () => { if (window.lucide) lucide.createIcons(); });
+</script>
+</body>
+</html>

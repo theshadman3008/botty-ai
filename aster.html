@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<script>
+(function(){if(localStorage.getItem('botty_lw_auth')!=='1'){window.location.replace('index.html');}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Botty — Aster A* | SK Telecom AI Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #020202;
+  --bg2: #0a0a0a;
+  --bg3: #111;
+  --card: #161616;
+  --border: rgba(255,255,255,0.07);
+  --white: #ffffff;
+  --gray: #8a8a8a;
+  --gray2: #444;
+  --accent: #7C3AED;
+  --accent2: #A78BFA;
+  --accent3: #5B21B6;
+  --sky: #38BDF8;
+  --green: #22C55E;
+  --orange: #F97316;
+  --red: #EF4444;
+  --yellow: #FBBF24;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --shadow: 0 4px 40px rgba(124,58,237,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+.topnav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(2,2,2,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+}
+.topnav-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;
+  color:var(--white);text-decoration:none;
+}
+.topnav-logo .dot{color:var(--accent2);}
+.topnav-tabs{display:flex;gap:4px;}
+.topnav-tab{
+  padding:6px 14px;border-radius:8px;
+  font-size:13px;font-weight:700;
+  color:var(--gray);text-decoration:none;
+  transition:all .2s;
+  border:1px solid transparent;
+}
+.topnav-tab:hover{color:var(--white);background:rgba(255,255,255,0.05);}
+.topnav-tab.active{
+  color:var(--accent2);
+  background:rgba(124,58,237,0.12);
+  border-color:rgba(124,58,237,0.3);
+}
+.topnav-back{
+  font-size:13px;font-weight:700;color:var(--gray);
+  text-decoration:none;
+  display:flex;align-items:center;gap:6px;
+  transition:color .2s;
+}
+.topnav-back:hover{color:var(--white);}
+
+.hero{
+  padding:120px 24px 80px;
+  text-align:center;
+  max-width:800px;
+  margin:0 auto;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(124,58,237,0.12);
+  border:1px solid rgba(124,58,237,0.3);
+  border-radius:100px;
+  padding:6px 18px;
+  font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent2);
+  margin-bottom:28px;
+}
+.hero-eyebrow .dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;animation:blink 1.4s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero h1{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(32px,6vw,62px);
+  font-weight:900;line-height:1.1;
+  letter-spacing:-.02em;
+  margin-bottom:20px;
+}
+.hero h1 .grad{
+  background:linear-gradient(135deg,#A78BFA 0%,#38BDF8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:18px;color:var(--gray);
+  max-width:560px;margin:0 auto 40px;
+  line-height:1.7;
+}
+.hero-meta{
+  display:flex;align-items:center;justify-content:center;
+  gap:24px;flex-wrap:wrap;
+  font-size:13px;color:var(--gray2);font-weight:700;
+}
+.hero-meta span{display:flex;align-items:center;gap:6px;}
+.hero-meta span b{color:var(--gray);}
+
+.section{padding:80px 24px;max-width:1140px;margin:0 auto;}
+.section-label{
+  display:inline-block;
+  background:rgba(124,58,237,0.1);
+  border:1px solid rgba(124,58,237,0.25);
+  border-radius:100px;
+  padding:4px 14px;
+  font-size:11px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent2);
+  margin-bottom:16px;
+}
+.section h2{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(22px,3.5vw,38px);
+  font-weight:900;line-height:1.2;
+  margin-bottom:12px;
+}
+.section-sub{font-size:16px;color:var(--gray);max-width:560px;line-height:1.7;}
+
+.overview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+  margin-top:40px;
+}
+.overview-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 24px;
+  transition:border-color .2s,transform .2s;
+}
+.overview-card:hover{border-color:rgba(124,58,237,0.4);transform:translateY(-3px);}
+.ov-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+}
+.ov-icon.purple{background:rgba(124,58,237,0.15);}
+.ov-icon.sky{background:rgba(56,189,248,0.12);}
+.ov-icon.green{background:rgba(34,197,94,0.12);}
+.ov-icon.orange{background:rgba(249,115,22,0.12);}
+.overview-card h4{font-weight:800;font-size:16px;margin-bottom:8px;}
+.overview-card p{font-size:14px;color:var(--gray);line-height:1.6;}
+
+.journey-wrapper{margin-top:64px;}
+.journey-item{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+  align-items:start;
+  padding:64px 0;
+  border-top:1px solid var(--border);
+}
+.journey-item:first-child{border-top:none;}
+.journey-item.reverse{direction:rtl;}
+.journey-item.reverse > *{direction:ltr;}
+@media(max-width:760px){
+  .journey-item,.journey-item.reverse{
+    grid-template-columns:1fr;direction:ltr;
+  }
+}
+.journey-info{}
+.journey-num{
+  font-family:'Nunito',sans-serif;
+  font-size:64px;font-weight:900;
+  color:rgba(124,58,237,0.15);
+  line-height:1;margin-bottom:12px;
+}
+.journey-tag{
+  display:inline-block;
+  padding:4px 12px;border-radius:100px;
+  font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.j-purple{background:rgba(124,58,237,0.12);color:var(--accent2);border:1px solid rgba(124,58,237,0.25);}
+.j-sky{background:rgba(56,189,248,0.1);color:var(--sky);border:1px solid rgba(56,189,248,0.2);}
+.j-green{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.j-orange{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,0.2);}
+.j-sky2{background:rgba(56,189,248,0.08);color:#7DD3FC;border:1px solid rgba(56,189,248,0.15);}
+.journey-info h3{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(20px,2.5vw,28px);
+  font-weight:900;line-height:1.2;
+  margin-bottom:12px;
+}
+.journey-info p{font-size:15px;color:var(--gray);line-height:1.7;margin-bottom:20px;}
+.journey-steps{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.journey-steps li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;color:var(--gray);
+}
+.step-circle{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;
+  flex-shrink:0;margin-top:1px;
+}
+.step-circle.purple{background:rgba(124,58,237,0.2);color:var(--accent2);}
+.step-circle.sky{background:rgba(56,189,248,0.15);color:var(--sky);}
+.step-circle.green{background:rgba(34,197,94,0.15);color:var(--green);}
+.step-circle.orange{background:rgba(249,115,22,0.15);color:var(--orange);}
+.step-circle.sky2{background:rgba(125,211,252,0.12);color:#7DD3FC;}
+.journey-steps li b{color:var(--white);font-weight:700;}
+
+.phone-wrap{display:flex;justify-content:center;align-items:flex-start;}
+.phone{
+  width:100%;max-width:320px;
+  background:#0d0d0d;
+  border-radius:42px;
+  border:2px solid rgba(255,255,255,0.1);
+  overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  position:relative;
+}
+.phone::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:100px;height:28px;background:#0d0d0d;
+  border-radius:0 0 20px 20px;z-index:10;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.phone-status{
+  height:44px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 24px 8px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);
+}
+.phone-app-header{
+  padding:12px 18px 14px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.app-avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.app-name{font-weight:800;font-size:14px;}
+.app-status{font-size:11px;color:var(--green);font-weight:700;}
+.phone-body{
+  padding:14px 14px;
+  display:flex;flex-direction:column;
+  gap:10px;
+  min-height:480px;
+  background:var(--bg);
+}
+.chat-msg{display:flex;flex-direction:column;gap:3px;max-width:88%;}
+.chat-msg.user{align-self:flex-end;align-items:flex-end;}
+.chat-msg.bot{align-self:flex-start;align-items:flex-start;}
+.bubble{
+  padding:10px 14px;border-radius:18px;
+  font-size:13px;line-height:1.5;
+}
+.bubble.user{
+  background:linear-gradient(135deg,#7C3AED,#5B21B6);
+  color:#fff;border-radius:18px 18px 4px 18px;
+}
+.bubble.bot{
+  background:#1c1c1c;border:1px solid rgba(255,255,255,0.08);
+  color:#e5e5e5;border-radius:18px 18px 18px 4px;
+}
+.bubble.proactive{
+  background:rgba(124,58,237,0.12);
+  border:1px solid rgba(124,58,237,0.2);
+  color:#c4b5fd;border-radius:18px;
+}
+.bubble .chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(124,58,237,0.18);border-radius:6px;
+  padding:2px 8px;font-size:11px;font-weight:700;color:var(--accent2);
+  margin-bottom:6px;
+}
+.bubble .action-row{
+  display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;
+}
+.bubble .action-btn{
+  padding:5px 10px;border-radius:8px;
+  font-size:11px;font-weight:800;
+  background:rgba(124,58,237,0.2);color:var(--accent2);
+  border:1px solid rgba(124,58,237,0.3);cursor:pointer;
+  white-space:nowrap;
+}
+.bubble .action-btn.confirm{
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border-color:rgba(34,197,94,0.25);
+}
+.bubble .action-btn.sky{
+  background:rgba(56,189,248,0.12);color:var(--sky);
+  border-color:rgba(56,189,248,0.2);
+}
+.bubble-time{font-size:10px;color:var(--gray2);margin-top:2px;}
+.divider-line{
+  text-align:center;font-size:11px;font-weight:700;
+  color:var(--gray2);letter-spacing:.05em;
+  padding:4px 0;
+}
+.info-card{
+  background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;padding:10px 12px;margin-top:6px;
+}
+.info-card .ic-title{font-size:12px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.info-card .ic-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:11px;color:var(--gray);padding:2px 0;
+}
+.info-card .ic-row b{color:var(--white);}
+.stars{color:var(--yellow);font-size:12px;letter-spacing:1px;}
+.score-bar{
+  height:4px;border-radius:2px;background:rgba(255,255,255,0.06);margin:4px 0;overflow:hidden;
+}
+.score-bar span{display:block;height:100%;border-radius:2px;}
+.phone-input{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px 14px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.phone-input-box{
+  flex:1;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);
+  border-radius:100px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.5);
+}
+.phone-input-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#7C3AED,#5B21B6);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  flex-shrink:0;
+}
+
+.agent-selector{
+  background:#111;border-radius:12px;
+  overflow:hidden;border:1px solid rgba(255,255,255,0.07);
+  margin-bottom:8px;
+}
+.agent-sel-title{
+  padding:8px 12px;font-size:11px;font-weight:800;
+  color:var(--gray2);letter-spacing:.06em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.agent-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:12px;cursor:pointer;transition:background .15s;
+}
+.agent-item:last-child{border-bottom:none;}
+.agent-item.sel{background:rgba(124,58,237,0.1);}
+.agent-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.agent-item .agent-name{font-weight:700;color:var(--white);}
+.agent-item .agent-desc{font-size:10px;color:var(--gray2);margin-top:1px;}
+.agent-item .check{margin-left:auto;color:var(--accent2);font-size:14px;}
+
+.flow-step{
+  background:#131313;border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;padding:10px 12px;
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;
+}
+.flow-step .fs-icon{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.flow-step .fs-text b{display:block;font-weight:700;color:var(--white);font-size:12px;}
+.flow-step .fs-text span{color:var(--gray);font-size:11px;}
+.flow-step .fs-status{
+  margin-left:auto;font-size:10px;font-weight:800;
+  padding:3px 8px;border-radius:6px;white-space:nowrap;
+}
+.status-done{background:rgba(34,197,94,0.12);color:var(--green);}
+.status-prog{background:rgba(249,115,22,0.1);color:var(--orange);}
+.status-wait{background:rgba(255,255,255,0.05);color:var(--gray2);}
+.flow-connector{
+  width:2px;height:12px;background:rgba(255,255,255,0.06);
+  margin:0 auto 0 20px;
+}
+
+.wl-card{
+  background:#131313;border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;padding:10px 12px;margin-bottom:6px;
+}
+.wl-row{display:flex;align-items:center;justify-content:space-between;}
+.wl-ticker{font-weight:800;font-size:13px;}
+.wl-name{font-size:10px;color:var(--gray2);}
+.wl-price{font-weight:700;font-size:13px;}
+.wl-change{font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px;}
+.wl-up{background:rgba(34,197,94,0.12);color:var(--green);}
+.wl-down{background:rgba(239,68,68,0.1);color:var(--red);}
+.wl-chart{height:28px;margin-top:6px;}
+.wl-chart svg{width:100%;height:28px;}
+
+.stats-row{
+  display:flex;gap:16px;flex-wrap:wrap;
+  margin-top:48px;padding-top:32px;
+  border-top:1px solid var(--border);
+}
+.stat-box{flex:1;min-width:160px;}
+.stat-num{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(32px,4vw,48px);
+  font-weight:900;line-height:1;
+  background:linear-gradient(135deg,#A78BFA,#38BDF8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:6px;
+}
+.stat-label{font-size:13px;color:var(--gray);font-weight:700;}
+
+footer{
+  border-top:1px solid var(--border);
+  padding:32px 24px;text-align:center;
+  font-size:13px;color:var(--gray2);
+}
+footer a{color:var(--accent2);text-decoration:none;font-weight:700;}
+
+@media(max-width:600px){
+  .hero{padding:100px 16px 48px;}
+  .section{padding:48px 16px;}
+  .topnav-tabs{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="botty.html" class="topnav-logo">🤖 Botty<span class="dot">.</span></a>
+  <div class="topnav-tabs">
+    <a href="botty.html" class="topnav-tab">🏠 Home</a>
+    <a href="aster.html" class="topnav-tab active">🌟 Aster A*</a>
+  </div>
+  <a href="botty.html" class="topnav-back">← Torna alla home</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    SK Telecom · AI Agent Research
+  </div>
+  <h1>Aster <span class="grad">A*</span><br>— l'AI che agisce,<br>non solo risponde.</h1>
+  <p class="hero-sub">
+    Analisi dell'assistente AI di SK Telecom: architettura, funzionalità chiave
+    e journey tipici dell'utente simulati su interfaccia mobile.
+  </p>
+  <div class="hero-meta">
+    <span>🇰🇷 <b>SK Telecom</b> — Seoul</span>
+    <span>📅 <b>CES 2025</b> — lancio globale</span>
+    <span>👥 <b>10M+</b> MAU (A-Dot, 2025)</span>
+    <span>🤝 <b>Perplexity</b> partner</span>
+  </div>
+</div>
+
+<div class="section">
+  <span class="section-label">Cos'è Aster</span>
+  <h2>Personal AI Agent<br>per la gestione della vita</h2>
+  <p class="section-sub">
+    Aster (A*) è il prodotto globale, mentre A. (A-Dot) è la versione coreana con oltre 10M di utenti attivi mensili.
+    A differenza di Siri o Alexa, Aster pianifica e <em>esegue</em> azioni multi-step in autonomia.
+  </p>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="ov-icon purple">🔮</div>
+      <h4>Agentic Workflow</h4>
+      <p>Imposta obiettivi basati sulla cronologia utente, pianifica i passi e li esegue in sequenza — senza che l'utente debba guidare ogni microazione.</p>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon sky">📅</div>
+      <h4>Life Management</h4>
+      <p>Legge il calendario, crea to-do list, invia reminder contestuali e gestisce l'intera sequenza pianificazione→prenotazione→pagamento.</p>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon green">🔍</div>
+      <h4>Conversational Search</h4>
+      <p>Integrazione con Perplexity per ricerche conversazionali profonde. L'utente seleziona tra più LLM: ChatGPT, Claude, A.X, Perplexity.</p>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon orange">🤝</div>
+      <h4>Third-Party Agents</h4>
+      <p>Ecosistema aperto: TMAP Mobility per trasporti, TimeTree per calendari condivisi, partner per prenotazioni, pagamenti e molto altro.</p>
+    </div>
+  </div>
+
+  
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num">10M+</div>
+      <div class="stat-label">MAU su A-Dot (Korea, 2025)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">7</div>
+      <div class="stat-label">LLM disponibili in-app</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">67M</div>
+      <div class="stat-label">Utenti TimeTree (partner)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Lancio ufficiale US market</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <span class="section-label">5 Journey tipici</span>
+  <h2>Come l'utente<br>interagisce con Aster</h2>
+  <p class="section-sub">Ogni scenario illustra un pattern reale di utilizzo basato su funzionalità documentate.</p>
+
+  <div class="journey-wrapper">
+
+    
+    <div class="journey-item">
+      <div class="journey-info">
+        <div class="journey-num">01</div>
+        <span class="journey-tag j-purple">Morning Routine</span>
+        <h3>Il briefing<br>proattivo del mattino</h3>
+        <p>Senza che l'utente chieda nulla, Aster analizza agenda, meteo e traffico e invia un riassunto contestuale al risveglio. È il pattern "proactive suggestion" di A-Dot.</p>
+        <ul class="journey-steps">
+          <li><span class="step-circle purple">1</span><span><b>Aster legge il calendario</b> e rileva 3 eventi del giorno.</span></li>
+          <li><span class="step-circle purple">2</span><span>Controlla il <b>meteo</b> e le condizioni di traffico per ogni appuntamento.</span></li>
+          <li><span class="step-circle purple">3</span><span>Genera un <b>briefing personalizzato</b> e lo invia come notifica push.</span></li>
+          <li><span class="step-circle purple">4</span><span>Propone azioni: <b>prenotare taxi, aggiornare partner</b>, impostare reminder.</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-status">
+            <span>09:07</span>
+            <span>●●● WiFi 🔋</span>
+          </div>
+          <div class="phone-app-header">
+            <div class="app-avatar" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">✦</div>
+            <div>
+              <div class="app-name">Aster A*</div>
+              <div class="app-status">● Attivo</div>
+            </div>
+          </div>
+          <div class="phone-body">
+            <div class="divider-line">☀️ Buongiorno, Alex — Mercoledì 2 aprile</div>
+            <div class="chat-msg bot">
+              <div class="bubble proactive">
+                <div class="chip">✦ Briefing mattutino</div>
+                Ecco la tua giornata:<br><br>
+                📅 <b>3 eventi</b> in agenda<br>
+                🌤 Milano <b>18°C</b>, nuvole sparse<br>
+                🚦 A8 trafficata — <b>+22 min</b> verso centro
+              </div>
+              <div class="bubble-time">09:07 · Aster</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                Il tuo <b>meeting alle 10:30</b> in Via Tortona richiede partenza entro <b>09:55</b> per arrivare in orario 🚗<br><br>
+                Vuoi che prenoti un taxi o preferisci ricevere il percorso?
+                <div class="action-row">
+                  <span class="action-btn confirm">🚕 Prenota taxi</span>
+                  <span class="action-btn">🗺 Percorso</span>
+                  <span class="action-btn sky">⏰ Remind 09:45</span>
+                </div>
+              </div>
+              <div class="bubble-time">09:07 · Aster</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="bubble user">Remind alle 09:45, grazie!</div>
+              <div class="bubble-time">09:08</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">✅ Reminder impostato per le <b>09:45</b>. Ti avviso io — non devi fare nulla.</div>
+              <div class="bubble-time">09:08 · Aster</div>
+            </div>
+          </div>
+          <div class="phone-input">
+            <div class="phone-input-box">Scrivi un messaggio…</div>
+            <div class="phone-input-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="journey-item reverse">
+      <div class="journey-info">
+        <div class="journey-num">02</div>
+        <span class="journey-tag j-sky">Event Planning</span>
+        <h3>Cena in ristorante:<br>da idea a prenotazione</h3>
+        <p>L'utente esprime un desiderio vago. Aster ricerca ristoranti, mostra recensioni, propone opzioni e completa la prenotazione — tutto in-app, senza uscire dalla chat.</p>
+        <ul class="journey-steps">
+          <li><span class="step-circle sky">1</span><span>Utente chiede <b>"cena con amici sabato"</b> — nessun dettaglio specifico.</span></li>
+          <li><span class="step-circle sky">2</span><span>Aster <b>interroga servizi terzi</b> (review, disponibilità, prezzi) tramite third-party agents.</span></li>
+          <li><span class="step-circle sky">3</span><span>Presenta <b>3 opzioni filtrate</b> per zona, budget e tipo di cucina preferita dall'utente.</span></li>
+          <li><span class="step-circle sky">4</span><span>Utente approva → Aster <b>prenota, conferma via email</b> e aggiunge al calendario.</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-status"><span>20:14</span><span>●●● WiFi 🔋</span></div>
+          <div class="phone-app-header">
+            <div class="app-avatar" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">✦</div>
+            <div><div class="app-name">Aster A*</div><div class="app-status">● Attivo</div></div>
+          </div>
+          <div class="phone-body">
+            <div class="chat-msg user">
+              <div class="bubble user">Sabato sera cena con 4 amici, zona Navigli, budget €35-40 a testa</div>
+              <div class="bubble-time">20:14</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                <div class="chip">🔍 Ricerca in corso…</div>
+                Ho trovato <b>3 opzioni</b> top sui Navigli per sabato 5 aprile, ore 20:30:
+              </div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                <div class="info-card">
+                  <div class="ic-title">🍝 Trattoria Moderna</div>
+                  <div class="ic-row"><span class="stars">★★★★★</span><b>4.8 / 1.2k rec.</b></div>
+                  <div class="ic-row"><span>Cucina milanese</span><b>~€38pp</b></div>
+                  <div class="score-bar"><span style="width:96%;background:linear-gradient(90deg,#22C55E,#16A34A);"></span></div>
+                </div>
+                <div class="info-card" style="margin-top:6px;">
+                  <div class="ic-title">🥩 Brace &amp; Vino</div>
+                  <div class="ic-row"><span class="stars">★★★★☆</span><b>4.5 / 890 rec.</b></div>
+                  <div class="ic-row"><span>Grill contemporaneo</span><b>~€36pp</b></div>
+                  <div class="score-bar"><span style="width:80%;background:linear-gradient(90deg,#38BDF8,#0EA5E9);"></span></div>
+                </div>
+                <div class="action-row">
+                  <span class="action-btn confirm">✅ Prenota Moderna</span>
+                  <span class="action-btn sky">👁 Vedi tutte</span>
+                </div>
+              </div>
+              <div class="bubble-time">20:14 · Aster</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="bubble user">Ok, Trattoria Moderna per 5 ore 20:30</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">✅ <b>Prenotazione confermata!</b><br>📅 Aggiunto al tuo calendario<br>📧 Conferma inviata via email</div>
+              <div class="bubble-time">20:15 · Aster</div>
+            </div>
+          </div>
+          <div class="phone-input">
+            <div class="phone-input-box">Scrivi un messaggio…</div>
+            <div class="phone-input-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="journey-item">
+      <div class="journey-info">
+        <div class="journey-num">03</div>
+        <span class="journey-tag j-green">Agentic Workflow</span>
+        <h3>Viaggio di lavoro:<br>Aster pianifica tutto</h3>
+        <p>Aster rileva un viaggio nel calendario e — senza essere invitato — avvia il flusso agentivo: hotel, volo, itinerario, meteo. Il core dell'Agentic Workflow implementato in agosto 2025.</p>
+        <ul class="journey-steps">
+          <li><span class="step-circle green">1</span><span><b>Rilevamento automatico</b>: Aster legge "Las Vegas — MWC America" in agenda.</span></li>
+          <li><span class="step-circle green">2</span><span>Avvia l'<b>agentic workflow</b>: definisce obiettivi → pianifica → esegue in parallelo.</span></li>
+          <li><span class="step-circle green">3</span><span>Cerca voli, hotel vicini alla venue, check meteo, <b>tutto in autonomia</b>.</span></li>
+          <li><span class="step-circle green">4</span><span>Presenta il piano completo: <b>l'utente approva o modifica</b>, non deve cercare nulla.</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-status"><span>08:30</span><span>●●● WiFi 🔋</span></div>
+          <div class="phone-app-header">
+            <div class="app-avatar" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">✦</div>
+            <div><div class="app-name">Aster A*</div><div class="app-status">● Attivo</div></div>
+          </div>
+          <div class="phone-body">
+            <div class="chat-msg bot">
+              <div class="bubble proactive">
+                <div class="chip">⚡ Agentic Workflow avviato</div>
+                Ho visto <b>MWC Americas — Las Vegas</b> tra 5 giorni. Sto preparando il tuo piano di viaggio…
+              </div>
+            </div>
+            <div class="chat-msg bot" style="gap:5px;">
+              <div style="font-size:11px;color:var(--gray2);font-weight:700;margin-bottom:2px;">Aster sta lavorando per te:</div>
+              <div class="flow-step"><div class="fs-icon" style="background:rgba(34,197,94,0.12);">✈️</div><div class="fs-text"><b>Ricerca voli MXP→LAS</b><span>3 opzioni trovate</span></div><span class="fs-status status-done">✓ Fatto</span></div>
+              <div class="flow-connector"></div>
+              <div class="flow-step"><div class="fs-icon" style="background:rgba(56,189,248,0.12);">🏨</div><div class="fs-text"><b>Hotel vicino venue</b><span>Confronto prezzi…</span></div><span class="fs-status status-prog">● In corso</span></div>
+              <div class="flow-connector"></div>
+              <div class="flow-step"><div class="fs-icon" style="background:rgba(255,255,255,0.05);">🌤</div><div class="fs-text"><b>Meteo Las Vegas 7-10 apr</b><span>In attesa</span></div><span class="fs-status status-wait">○ Attesa</span></div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                ✅ <b>Piano pronto!</b><br>
+                ✈️ ITA Airways MXP→LAS — <b>€480 A/R</b><br>
+                🏨 Marriott (0.3km venue) — <b>€185/notte</b><br>
+                🌤 Soleggiato, 28°C — <b>niente ombrello</b>
+                <div class="action-row">
+                  <span class="action-btn confirm">✅ Approva tutto</span>
+                  <span class="action-btn">✏️ Modifica</span>
+                </div>
+              </div>
+              <div class="bubble-time">08:31 · Aster</div>
+            </div>
+          </div>
+          <div class="phone-input">
+            <div class="phone-input-box">Scrivi un messaggio…</div>
+            <div class="phone-input-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="journey-item reverse">
+      <div class="journey-info">
+        <div class="journey-num">04</div>
+        <span class="journey-tag j-orange">Life Management</span>
+        <h3>Watchlist & finanza:<br>alert intelligenti</h3>
+        <p>Aster monitora i titoli seguiti dall'utente, rileva movimenti anomali e invia alert contestuali con possibilità di approfondimento — senza uscire dalla conversazione.</p>
+        <ul class="journey-steps">
+          <li><span class="step-circle orange">1</span><span>Aster monitora i <b>5 titoli in watchlist</b> durante la sessione di borsa.</span></li>
+          <li><span class="step-circle orange">2</span><span>Rileva <b>variazione anomala</b> su NVDA e invia alert proattivo.</span></li>
+          <li><span class="step-circle orange">3</span><span>L'utente chiede un'analisi rapida → Aster <b>interroga Perplexity</b> per la notizia catalizzatore.</span></li>
+          <li><span class="step-circle orange">4</span><span>Mostra riepilogo portafoglio e <b>suggerisce possibili azioni</b> (non è consulenza finanziaria).</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-status"><span>15:42</span><span>●●● WiFi 🔋</span></div>
+          <div class="phone-app-header">
+            <div class="app-avatar" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">✦</div>
+            <div><div class="app-name">Aster A*</div><div class="app-status">● Attivo</div></div>
+          </div>
+          <div class="phone-body">
+            <div class="chat-msg bot">
+              <div class="bubble proactive">
+                <div class="chip">📈 Alert watchlist</div>
+                <b>NVDA</b> +8.4% nell'ultima ora. Volume anomalo rilevato 🚀
+              </div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                La tua watchlist adesso:
+                <div class="wl-card">
+                  <div class="wl-row"><div><div class="wl-ticker">NVDA</div><div class="wl-name">NVIDIA Corp</div></div><div style="text-align:right"><div class="wl-price">$892.40</div><span class="wl-change wl-up">+8.4%</span></div></div>
+                </div>
+                <div class="wl-card">
+                  <div class="wl-row"><div><div class="wl-ticker">AAPL</div><div class="wl-name">Apple Inc.</div></div><div style="text-align:right"><div class="wl-price">$172.18</div><span class="wl-change wl-down">-0.3%</span></div></div>
+                </div>
+                <div class="wl-card">
+                  <div class="wl-row"><div><div class="wl-ticker">STLAM</div><div class="wl-name">Stellantis NV</div></div><div style="text-align:right"><div class="wl-price">€5.98</div><span class="wl-change wl-up">+2.1%</span></div></div>
+                </div>
+              </div>
+              <div class="bubble-time">15:42 · Aster</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="bubble user">Perché NVDA sale così tanto?</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                <div class="chip">🔍 Perplexity</div>
+                Jensen Huang ha annunciato oggi <b>Blackwell Ultra GPU</b> — attese di produzione +40% Q3. Gli analisti alzano il target a <b>$1.050</b>.
+              </div>
+              <div class="bubble-time">15:42 · Aster</div>
+            </div>
+          </div>
+          <div class="phone-input">
+            <div class="phone-input-box">Scrivi un messaggio…</div>
+            <div class="phone-input-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="journey-item">
+      <div class="journey-info">
+        <div class="journey-num">05</div>
+        <span class="journey-tag j-sky2">Multi-LLM</span>
+        <h3>Selezione del modello:<br>l'ecosistema AI in tasca</h3>
+        <p>Una delle feature più originali di A-Dot: l'utente può scegliere quale LLM usare per ogni query — da ChatGPT a Claude, da Perplexity ad A.X (il modello proprietario SK Telecom).</p>
+        <ul class="journey-steps">
+          <li><span class="step-circle sky2">1</span><span>L'utente accede alla <b>selezione modello</b> direttamente dall'interfaccia chat.</span></li>
+          <li><span class="step-circle sky2">2</span><span>Ogni LLM ha un <b>profilo diverso</b>: ragionamento, creatività, ricerca web, coreano.</span></li>
+          <li><span class="step-circle sky2">3</span><span>Aster instrada la query al modello selezionato e <b>integra la risposta</b> nel flusso.</span></li>
+          <li><span class="step-circle sky2">4</span><span>I componenti agentici (reminder, prenotazioni) rimangono <b>sempre disponibili</b> indipendentemente dal modello scelto.</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-status"><span>11:20</span><span>●●● WiFi 🔋</span></div>
+          <div class="phone-app-header">
+            <div class="app-avatar" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);">✦</div>
+            <div><div class="app-name">Aster A*</div><div class="app-status">● Attivo</div></div>
+          </div>
+          <div class="phone-body">
+            <div class="chat-msg user">
+              <div class="bubble user">Voglio usare Claude per questa domanda — è più preciso sull'analisi strategica</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                <div class="chip">🤖 Seleziona modello</div>
+                <div class="agent-selector">
+                  <div class="agent-sel-title">Scegli AI</div>
+                  <div class="agent-item">
+                    <div class="agent-dot" style="background:#10A37F;"></div>
+                    <div><div class="agent-name">ChatGPT 4o</div><div class="agent-desc">Versatile, creativo</div></div>
+                  </div>
+                  <div class="agent-item sel">
+                    <div class="agent-dot" style="background:#D97757;"></div>
+                    <div><div class="agent-name">Claude Sonnet</div><div class="agent-desc">Analisi profonda, preciso</div></div>
+                    <span class="check">✓</span>
+                  </div>
+                  <div class="agent-item">
+                    <div class="agent-dot" style="background:#20808D;"></div>
+                    <div><div class="agent-name">Perplexity</div><div class="agent-desc">Ricerca web real-time</div></div>
+                  </div>
+                  <div class="agent-item">
+                    <div class="agent-dot" style="background:#7C3AED;"></div>
+                    <div><div class="agent-name">A.X (SK Telecom)</div><div class="agent-desc">Ottimizzato per coreano</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="bubble-time">11:20 · Aster</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="bubble user">Analizza i punti di forza di SK Telecom nel mercato AI agent rispetto ad Apple Intelligence</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="bubble bot">
+                <div class="chip" style="background:rgba(217,119,87,0.15);color:#FDBA74;border:1px solid rgba(217,119,87,0.3);">Claude Sonnet</div>
+                SK Telecom ha un vantaggio chiave nell'<b>agentic execution</b>: esegue azioni multi-step cross-app, mentre Apple Intelligence rimane prevalentemente single-app. Il modello di partnership aperta con terze parti garantisce un ecosistema più estensibile…
+              </div>
+              <div class="bubble-time">11:21 · Aster</div>
+            </div>
+          </div>
+          <div class="phone-input">
+            <div class="phone-input-box">Scrivi un messaggio…</div>
+            <div class="phone-input-btn">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>Ricerca condotta da <a href="botty.html">Botty</a> · Fonte: SK Telecom newsroom, CES 2025, Microsoft Customer Stories, Korea Herald · Aprile 2026</p>
+  <p style="margin-top:8px;color:#333;">Questa pagina è riservata — area protetta Botty.AI</p>
+</footer>
+
+</body>
+</html>

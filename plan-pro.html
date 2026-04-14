@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Botty Pro — €2,99/mese | Attiva il tuo piano</title>
+<meta name="description" content="Attiva Botty Pro a €2,99/mese. AI avanzata, notifiche proattive, integrazioni calendario e email su Telegram.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<style>
+  :root {
+    --bg:         #000000;
+    --bg2:        #0d0d0d;
+    --bg3:        #141414;
+    --green:      #00993D;
+    --teal:       #64C2C9;
+    --gradient:   linear-gradient(135deg, #00993D 0%, #64C2C9 100%);
+    --white:      #FFFFFF;
+    --gray:       #9a9a9a;
+    --gray2:      #505050;
+    --border:     rgba(255,255,255,0.06);
+    --border-g:   rgba(0,153,61,0.3);
+    --radius:     18px;
+    --radius-sm:  10px;
+    --glow:       0 0 40px rgba(0,153,61,0.25);
+    --glow-lg:    0 0 80px rgba(0,153,61,0.35);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .container    { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .container-sm { max-width: 680px;  margin: 0 auto; padding: 0 24px; }
+  .tag {
+    display: inline-block;
+    background: rgba(0,153,61,0.12);
+    color: #4CD97A;
+    border: 1px solid rgba(0,153,61,0.35);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 16px; margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800;
+    text-decoration: none; cursor: pointer;
+    border: none; transition: all .22s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--gradient); color: var(--white);
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--glow-lg); filter: brightness(1.08); }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: rgba(100,194,201,0.4); background: rgba(100,194,201,0.05); }
+  .btn-lg   { padding: 18px 40px; font-size: 17px; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn-stripe {
+    background: #635BFF; color: #fff;
+    box-shadow: 0 0 32px rgba(99,91,255,0.3);
+    font-size: 16px; font-weight: 800;
+  }
+  .btn-stripe:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 0 48px rgba(99,91,255,0.45); }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    background: rgba(0,0,0,0.8);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; max-width: 1100px; margin: 0 auto; padding: 0 24px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 900;
+    color: var(--white); text-decoration: none; letter-spacing: -.02em;
+  }
+  .nav-logo .logo-icon {
+    width: 34px; height: 34px; background: var(--gradient);
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 17px;
+  }
+  .nav-logo .dot { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-badge {
+    background: rgba(0,153,61,0.12); color: #4CD97A;
+    border: 1px solid rgba(0,153,61,0.35); border-radius: 100px;
+    font-size: 12px; font-weight: 800; padding: 5px 14px;
+  }
+  .plan-hero { padding: 120px 0 64px; text-align: center; }
+  .plan-hero h1 {
+    font-size: clamp(34px, 5.5vw, 56px); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.05; margin-bottom: 16px;
+  }
+  .plan-hero h1 .grad {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .plan-price {
+    font-size: clamp(52px, 9vw, 80px); font-weight: 900;
+    letter-spacing: -.05em; line-height: 1;
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .plan-price sub {
+    font-size: 18px; font-weight: 600; color: var(--gray);
+    -webkit-text-fill-color: var(--gray); vertical-align: baseline; letter-spacing: 0;
+  }
+  .plan-hero-desc {
+    font-size: 18px; color: var(--gray); margin-top: 14px;
+    max-width: 460px; margin-left: auto; margin-right: auto; font-weight: 500;
+  }
+  .plan-guarantee {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,153,61,0.08); border: 1px solid rgba(0,153,61,0.25);
+    border-radius: 100px; padding: 8px 22px;
+    font-size: 13px; font-weight: 700; color: #4CD97A; margin-top: 22px;
+  }
+  .features-section { padding: 64px 0; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; margin-top: 40px; }
+  .feature-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px;
+    transition: border-color .2s, transform .2s; position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--gradient); opacity: 0; transition: opacity .25s;
+  }
+  .feature-card:hover { border-color: var(--border-g); transform: translateY(-3px); }
+  .feature-card:hover::before { opacity: 1; }
+  .feature-icon-wrap {
+    width: 48px; height: 48px;
+    background: rgba(0,153,61,0.1); border: 1px solid rgba(0,153,61,0.2);
+    border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; margin-bottom: 16px; color: var(--teal);
+  }
+  .feature-icon-wrap svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  .feature-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.01em; }
+  .feature-card p  { font-size: 14px; color: var(--gray); line-height: 1.55; font-weight: 500; }
+  .compare-section { padding: 40px 0 64px; }
+  .compare-table {
+    width: 100%; border-collapse: collapse; background: var(--bg2);
+    border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);
+  }
+  .compare-table th {
+    padding: 16px 22px; text-align: left;
+    font-size: 12px; font-weight: 800; color: var(--gray);
+    text-transform: uppercase; letter-spacing: .08em;
+    background: var(--bg3); border-bottom: 1px solid var(--border);
+  }
+  .compare-table th.hl { color: #4CD97A; }
+  .compare-table td {
+    padding: 13px 22px; font-size: 14px; font-weight: 600;
+    border-bottom: 1px solid var(--border); color: var(--gray);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child { color: var(--white); font-weight: 700; }
+  .check { color: #4CD97A; } .cross { color: var(--gray2); }
+  .highlight-col { color: #4CD97A !important; font-weight: 800 !important; }
+  .funnel-section { padding: 64px 0 100px; }
+  .funnel-box {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    max-width: 560px; margin: 0 auto;
+  }
+  .funnel-header {
+    background: linear-gradient(135deg, rgba(0,153,61,.12) 0%, rgba(100,194,201,.08) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .funnel-header-info h2 { font-size: 20px; font-weight: 900; letter-spacing: -.03em; margin-bottom: 4px; }
+  .funnel-header-info p { font-size: 13px; color: var(--gray); font-weight: 600; }
+  .funnel-price-badge .amount {
+    font-size: 34px; font-weight: 900;
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -.04em;
+  }
+  .funnel-price-badge .period { font-size: 13px; color: var(--gray); text-align: right; font-weight: 600; }
+  .steps-indicator {
+    display: flex; align-items: center;
+    padding: 18px 36px; gap: 0; border-bottom: 1px solid var(--border);
+  }
+  .step-dot {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; color: var(--gray2); flex: 1;
+  }
+  .step-dot.active { color: var(--white); }
+  .step-dot.done   { color: var(--teal); }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; background: transparent; font-weight: 900;
+  }
+  .step-dot.active .step-num { background: var(--gradient); border: none; color: var(--white); }
+  .step-dot.done   .step-num { background: rgba(100,194,201,.15); border-color: var(--teal); color: var(--teal); }
+  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 6px; max-width: 28px; }
+  .funnel-body { padding: 32px 36px; }
+  .form-step   { display: none; }
+  .form-step.active { display: block; }
+  .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-group label { font-size: 13px; font-weight: 800; color: var(--gray); letter-spacing: .02em; }
+  .form-group input {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 13px 16px; font-size: 15px; font-weight: 600;
+    font-family: 'Nunito', sans-serif; color: var(--white);
+    outline: none; transition: border-color .2s; -webkit-appearance: none;
+  }
+  .form-group input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,153,61,.12); }
+  .form-group input::placeholder { color: var(--gray2); }
+  .form-group input.error { border-color: #e05757; }
+  .form-error { font-size: 12px; color: #e05757; margin-top: 4px; display: none; font-weight: 700; }
+  .form-group.has-error .form-error { display: block; }
+  .form-note {
+    font-size: 12px; color: var(--gray2); text-align: center;
+    margin-top: 16px; line-height: 1.6; font-weight: 600;
+  }
+  .form-note a { color: var(--teal); text-decoration: none; }
+
+  
+  .stripe-summary {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 20px; margin-bottom: 22px;
+  }
+  .stripe-user-row {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;
+  }
+  .stripe-user-avatar {
+    width: 38px; height: 38px; background: rgba(0,153,61,.1);
+    border: 1px solid rgba(0,153,61,.2); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--teal);
+  }
+  .stripe-user-avatar svg { width: 18px; height: 18px; }
+  .stripe-user-info strong { display: block; font-size: 14px; font-weight: 800; }
+  .stripe-user-info span  { font-size: 13px; color: var(--gray); font-weight: 600; }
+  .order-row {
+    display: flex; justify-content: space-between;
+    align-items: center; font-size: 14px; font-weight: 600;
+    padding: 6px 0; color: var(--gray);
+  }
+  .order-row span:last-child { color: var(--white); font-weight: 700; }
+  .order-row.total {
+    border-top: 1px solid var(--border); margin-top: 8px;
+    padding-top: 14px; font-weight: 900; font-size: 16px;
+  }
+  .order-row.total span:last-child {
+    background: var(--gradient); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  
+  .stripe-powered {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; font-size: 12px; color: var(--gray2);
+    margin-top: 14px; font-weight: 700;
+  }
+  .stripe-powered svg { opacity: .5; }
+
+  
+  .success-step { text-align: center; padding: 8px 0; }
+  .success-icon {
+    width: 72px; height: 72px; background: var(--gradient);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 22px; color: white;
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .success-icon svg { width: 34px; height: 34px; stroke-width: 2.5; }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-step h3 { font-size: 24px; font-weight: 900; letter-spacing: -.03em; margin-bottom: 10px; }
+  .success-step > p { color: var(--gray); font-size: 15px; margin-bottom: 24px; font-weight: 600; }
+  .activation-box {
+    background: var(--bg3); border: 1px solid rgba(0,153,61,.3);
+    border-radius: var(--radius-sm); padding: 20px; margin-bottom: 22px;
+  }
+  .activation-box .alabel {
+    font-size: 11px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: .1em; background: var(--gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 8px;
+  }
+  .activation-code {
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: var(--gray); word-break: break-all; margin-bottom: 14px;
+    background: rgba(255,255,255,.04); padding: 8px 12px;
+    border-radius: 6px; text-align: left;
+  }
+  .setup-steps { text-align: left; margin: 22px 0; }
+  .setup-steps h4 { font-size: 14px; font-weight: 800; margin-bottom: 14px; }
+  .setup-step-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .setup-num {
+    width: 26px; height: 26px; background: rgba(0,153,61,.12);
+    border: 1px solid rgba(0,153,61,.25); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900; color: #4CD97A; flex-shrink: 0; margin-top: 1px;
+  }
+  .setup-step-item p { font-size: 14px; color: var(--gray); line-height: 1.5; font-weight: 600; }
+  .setup-step-item p strong { color: var(--white); }
+
+  
+  .email-status {
+    font-size: 13px; text-align: center;
+    padding: 10px 16px; border-radius: var(--radius-sm);
+    margin-bottom: 16px; font-weight: 700; display: none;
+  }
+  .email-status.ok  { background: rgba(0,153,61,.1); color: #4CD97A; border: 1px solid rgba(0,153,61,.25); }
+  .email-status.err { background: rgba(224,87,87,.1); color: #e05757; border: 1px solid rgba(224,87,87,.25); }
+
+  .btn-back {
+    background: none; border: none; color: var(--gray);
+    font-size: 14px; font-weight: 700; font-family: 'Nunito', sans-serif;
+    cursor: pointer; display: flex; align-items: center;
+    gap: 6px; padding: 0; margin-bottom: 20px; transition: color .2s;
+  }
+  .btn-back:hover { color: var(--white); }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; }
+  .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .footer-links a { font-size: 13px; font-weight: 700; color: var(--gray2); text-decoration: none; transition: color .2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { font-size: 12px; color: var(--gray2); font-weight: 600; }
+
+  @media(max-width:600px){
+    .form-row { grid-template-columns: 1fr; }
+    .funnel-header { padding: 20px; }
+    .funnel-body   { padding: 24px 20px; }
+    .steps-indicator { padding: 14px 20px; }
+    .step-dot span:last-child { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="botty.html" class="nav-logo">
+      <span class="logo-icon">🤖</span>
+      Botty<span class="dot">.</span>
+    </a>
+    <span class="nav-badge">Piano Pro</span>
+  </div>
+</nav>
+
+<section class="plan-hero">
+  <div class="container-sm">
+    <span class="tag">Piano Pro</span>
+    <h1>Tutto il potere di Botty<br><span class="grad">nella tua tasca</span></h1>
+    <div class="plan-price">€2,99<sub>/mese</sub></div>
+    <p class="plan-hero-desc">AI avanzata, integrazioni complete, notifiche intelligenti. Senza limiti artificiali.</p>
+    <div class="plan-guarantee">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Garanzia rimborso 14 giorni · Cancelli in un click
+    </div>
+  </div>
+</section>
+
+<section class="features-section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:8px"><span class="tag">Cosa include</span></div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="brain-circuit"></i></div>
+        <h3>AI Avanzata (GPT-4o)</h3>
+        <p>Risposte più profonde, contesto più lungo, comprensione sfumata delle tue richieste.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="calendar-check-2"></i></div>
+        <h3>Integrazioni calendario & email</h3>
+        <p>Collega Google Calendar, Outlook, Gmail. Botty legge, scrive e ti ricorda.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="bell-ring"></i></div>
+        <h3>Notifiche proattive</h3>
+        <p>Botty ti avvisa prima che tu debba chiedere: scadenze, meteo, notizie, voli.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="infinity"></i></div>
+        <h3>Richieste illimitate</h3>
+        <p>Nessun cap giornaliero. Usa Botty quanto vuoi, quando vuoi.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="layout-dashboard"></i></div>
+        <h3>Dashboard personale</h3>
+        <p>Report settimanali su produttività, habit, spese. Tutto in un unico pannello.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap"><i data-lucide="headset"></i></div>
+        <h3>Supporto prioritario</h3>
+        <p>Risposta garantita entro 4 ore. Canale diretto con il team.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="compare-section">
+  <div class="container-sm">
+    <div style="text-align:center;margin-bottom:24px"><span class="tag">Confronto piani</span></div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Funzione</th><th>Starter</th><th class="hl">Pro ✦</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Messaggi giornalieri</td><td>10</td><td class="highlight-col">Illimitati</td></tr>
+        <tr><td>Modello AI</td><td>GPT-3.5</td><td class="highlight-col">GPT-4o</td></tr>
+        <tr><td>Integrazioni calendario</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Integrazioni email</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Notifiche proattive</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Dashboard personale</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Supporto prioritario</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Garanzia rimborso</td><td><span class="cross">✗</span></td><td class="highlight-col">14 giorni</td></tr>
+        <tr><td>Prezzo</td><td style="color:var(--gray)">Gratis</td><td class="highlight-col">€2,99/mese</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="funnel-section" id="attiva">
+  <div class="container-sm">
+    <div style="text-align:center;margin-bottom:32px">
+      <span class="tag">Attiva ora</span>
+      <h2 style="font-size:clamp(24px,4vw,36px);font-weight:900;letter-spacing:-.03em">
+        Sei a 2 minuti dall'attivare Pro
+      </h2>
+    </div>
+
+    <div class="funnel-box">
+      <div class="funnel-header">
+        <div class="funnel-header-info">
+          <h2>🤖 Botty Pro</h2>
+          <p>Piano mensile · Cancella quando vuoi</p>
+        </div>
+        <div class="funnel-price-badge">
+          <div class="amount">€2,99</div>
+          <div class="period">/mese</div>
+        </div>
+      </div>
+
+      <div class="steps-indicator">
+        <div class="step-dot active" id="dot-1">
+          <span class="step-num">1</span><span>Dati</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-dot" id="dot-2">
+          <span class="step-num">2</span><span>Pagamento</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-dot" id="dot-3">
+          <span class="step-num">3</span><span>Attivazione</span>
+        </div>
+      </div>
+
+      <div class="funnel-body">
+
+        
+        <div class="form-step active" id="step-1">
+          <div class="form-row">
+            <div class="form-group" id="g-nome">
+              <label for="nome">Nome *</label>
+              <input type="text" id="nome" placeholder="Mario" autocomplete="given-name">
+              <span class="form-error">Campo obbligatorio</span>
+            </div>
+            <div class="form-group" id="g-cognome">
+              <label for="cognome">Cognome *</label>
+              <input type="text" id="cognome" placeholder="Rossi" autocomplete="family-name">
+              <span class="form-error">Campo obbligatorio</span>
+            </div>
+          </div>
+          <div class="form-group" id="g-email">
+            <label for="email">Email *</label>
+            <input type="email" id="email" placeholder="mario@email.com" autocomplete="email">
+            <span class="form-error">Inserisci un'email valida</span>
+          </div>
+          <div class="form-group" id="g-tel">
+            <label for="telefono">Numero di telefono *</label>
+            <input type="tel" id="telefono" placeholder="+39 333 123 4567" autocomplete="tel">
+            <span class="form-error">Campo obbligatorio</span>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" onclick="goToStep2Pro()">
+            Continua →
+          </button>
+          <p class="form-note">
+            I tuoi dati sono protetti e non vengono condivisi con terze parti.<br>
+            <a href="#">Privacy policy</a>
+          </p>
+        </div>
+
+        
+        <div class="form-step" id="step-2">
+          <button class="btn-back" onclick="setStepPro(1)">← Modifica dati</button>
+
+          <div class="stripe-summary">
+            <div class="stripe-user-row">
+              <div class="stripe-user-avatar"><i data-lucide="user"></i></div>
+              <div class="stripe-user-info">
+                <strong id="summary-name">—</strong>
+                <span id="summary-email">—</span>
+              </div>
+            </div>
+            <div class="order-row"><span>Piano</span><span>Botty Pro</span></div>
+            <div class="order-row"><span>Abbonamento</span><span>Mensile</span></div>
+            <div class="order-row"><span>Garanzia rimborso</span><span style="color:#4CD97A">14 giorni</span></div>
+            <div class="order-row total"><span>Totale oggi</span><span>€2,99</span></div>
+          </div>
+
+          <button class="btn btn-stripe btn-full btn-lg" onclick="redirectToStripe('pro')" id="btn-pay-pro">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"/>
+              <line x1="2" x2="22" y1="10" y2="10"/>
+            </svg>
+            Paga con Stripe
+          </button>
+
+          <div class="stripe-powered">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Pagamento sicuro · powered by Stripe
+          </div>
+          <p class="form-note" style="margin-top:10px">
+            Verrai reindirizzato alla pagina di pagamento Stripe.<br>
+            SSL 256-bit · Nessun addebito nascosto
+          </p>
+        </div>
+
+        
+        <div class="form-step" id="step-3">
+          <div class="success-step">
+            <div class="success-icon"><i data-lucide="check"></i></div>
+            <h3>Benvenuto in Botty Pro!</h3>
+            <p id="success-desc">Pagamento confermato. Il tuo link di attivazione è pronto.</p>
+            <div id="email-status" class="email-status"></div>
+            <div class="activation-box">
+              <div class="alabel">Il tuo link di attivazione</div>
+              <div class="activation-code" id="activation-display">—</div>
+              <a id="activation-link" href="#" class="btn btn-primary btn-full">
+                <i data-lucide="send"></i> Attiva Botty su Telegram
+              </a>
+            </div>
+            <div class="setup-steps">
+              <h4>Come configurare il tuo piano Pro:</h4>
+              <div class="setup-step-item">
+                <div class="setup-num">1</div>
+                <p>Clicca il pulsante sopra — si aprirà <strong>Telegram</strong> con il bot Botty.</p>
+              </div>
+              <div class="setup-step-item">
+                <div class="setup-num">2</div>
+                <p>Scrivi <strong>/start</strong>. Il piano Pro sarà attivato automaticamente grazie al codice nel link.</p>
+              </div>
+              <div class="setup-step-item">
+                <div class="setup-num">3</div>
+                <p>Segui la guida per <strong>collegare email e calendario</strong>. Ci vogliono 2 minuti.</p>
+              </div>
+              <div class="setup-step-item">
+                <div class="setup-num">4</div>
+                <p>Inizia a usare Botty. Scrive email, crea eventi, ti ricorda tutto.</p>
+              </div>
+            </div>
+            <a href="botty.html" class="btn btn-ghost btn-full">← Torna alla home</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Termini</a>
+      <a href="#">Sicurezza</a>
+      <a href="mailto:ciao@botty.ai">Contatti</a>
+    </div>
+    <p class="footer-copy">© 2025 Botty AI · Tutti i diritti riservati</p>
+  </div>
+</footer>
+
+<script>
+
+const CONFIG = {
+
+  STRIPE_LINK_PRO: 'STRIPE_PAYMENT_LINK_PRO_QUI',
+
+  NOTIFY_EMAIL: 'TUA_EMAIL_QUI',
+
+  BOT_USERNAME: 'fwclawbot',
+  PLAN_NAME:    'Pro',
+  PLAN_PRICE:   '€2,99/mese',
+};
+
+const SS_KEY = 'botty_pro_user';
+
+window.addEventListener('load', () => {
+  if (window.lucide) lucide.createIcons();
+  checkPaymentReturn();
+});
+
+function checkPaymentReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') !== 'success') return;
+
+  history.replaceState(null, '', window.location.pathname);
+
+  const saved = (() => {
+    try { return JSON.parse(sessionStorage.getItem(SS_KEY) || 'null'); } catch { return null; }
+  })();
+
+  const code  = generateCode(CONFIG.PLAN_NAME.toLowerCase());
+  const link  = `https://t.me/${CONFIG.BOT_USERNAME}?start=${code}`;
+
+  document.getElementById('activation-display').textContent = link;
+  document.getElementById('activation-link').href = link;
+
+  if (saved) {
+    document.getElementById('success-desc').textContent =
+      `Pagamento confermato. Abbiamo inviato il link di attivazione a ${saved.email}.`;
+    sendConfirmEmail(saved, code, link);
+  }
+
+  sessionStorage.removeItem(SS_KEY);
+  setStepPro(3);
+  if (window.lucide) lucide.createIcons();
+
+  setTimeout(() => {
+    const el = document.getElementById('attiva');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+function goToStep2Pro() {
+  if (!validateStep1()) return;
+
+  const userData = {
+    nome:     document.getElementById('nome').value.trim(),
+    cognome:  document.getElementById('cognome').value.trim(),
+    email:    document.getElementById('email').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+  };
+
+  sessionStorage.setItem(SS_KEY, JSON.stringify(userData));
+
+  document.getElementById('summary-name').textContent  = userData.nome + ' ' + userData.cognome;
+  document.getElementById('summary-email').textContent = userData.email;
+
+  setStepPro(2);
+  if (window.lucide) lucide.createIcons();
+}
+
+function redirectToStripe(plan) {
+  const link = CONFIG.STRIPE_LINK_PRO;
+  if (!link || link.startsWith('STRIPE_')) {
+    alert('⚠️ Pagamento non ancora configurato. Contatta il team a ciao@botty.ai.');
+    return;
+  }
+
+  const saved = (() => {
+    try { return JSON.parse(sessionStorage.getItem(SS_KEY) || 'null'); } catch { return null; }
+  })();
+  const url = saved ? `${link}?prefilled_email=${encodeURIComponent(saved.email)}` : link;
+  window.location.href = url;
+}
+
+function sendConfirmEmail(user, code, activationLink) {
+  const email = CONFIG.NOTIFY_EMAIL;
+  if (!email || email.startsWith('TUA_EMAIL')) return;
+
+  const statusEl = document.getElementById('email-status');
+
+  const body = {
+    _subject:  `✅ Nuova attivazione Botty ${CONFIG.PLAN_NAME} — ${user.nome} ${user.cognome}`,
+    nome:      user.nome,
+    cognome:   user.cognome,
+    email:     user.email,
+    telefono:  user.telefono,
+    piano:     CONFIG.PLAN_NAME,
+    prezzo:    CONFIG.PLAN_PRICE,
+    codice:    code,
+    link:      activationLink,
+    _template: 'table',
+    _captcha:  'false',
+  };
+
+  fetch(`https://formsubmit.co/ajax/${email}`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body:    JSON.stringify(body),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success === 'true' || data.success === true) {
+      statusEl.textContent = `✓ Email di conferma inviata a ${user.email}`;
+      statusEl.className   = 'email-status ok';
+    } else {
+      statusEl.textContent = 'Email di conferma non inviata — riprova più tardi.';
+      statusEl.className   = 'email-status err';
+    }
+    statusEl.style.display = 'block';
+  })
+  .catch(() => {
+    statusEl.textContent   = 'Email di conferma non inviata — riprova più tardi.';
+    statusEl.className     = 'email-status err';
+    statusEl.style.display = 'block';
+  });
+}
+
+function setStepPro(n) {
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i + 1 < n)  d.classList.add('done');
+    if (i + 1 === n) d.classList.add('active');
+  });
+  const funnel = document.getElementById('attiva');
+  if (funnel) window.scrollTo({ top: funnel.offsetTop - 80, behavior: 'smooth' });
+}
+
+function validateStep1() {
+  let ok = true;
+  [
+    { id: 'nome',     g: 'g-nome',    check: v => v.length > 0 },
+    { id: 'cognome',  g: 'g-cognome', check: v => v.length > 0 },
+    { id: 'email',    g: 'g-email',   check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+    { id: 'telefono', g: 'g-tel',     check: v => v.length > 3 },
+  ].forEach(f => {
+    const val = document.getElementById(f.id).value.trim();
+    const grp = document.getElementById(f.g);
+    const inp = document.getElementById(f.id);
+    if (!f.check(val)) {
+      grp.classList.add('has-error');
+      inp.classList.add('error');
+      ok = false;
+    } else {
+      grp.classList.remove('has-error');
+      inp.classList.remove('error');
+    }
+  });
+  return ok;
+}
+
+function generateCode(prefix) {
+  const uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,
+    c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+  return prefix + '-' + uuid;
+}
+</script>
+</body>
+</html>
